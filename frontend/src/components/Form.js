@@ -3,12 +3,16 @@ import axios from "axios";
 
 const Form = ({ userDetails }) => {
   const [values, setValues] = useState({});
+  const [isUpdateUser, setIsUpdateUser] = useState(false);
 
   useEffect(() => {
     setValues({});
   }, []);
 
   useEffect(() => {
+    if (userDetails && userDetails.update) {
+      setIsUpdateUser(true);
+    }
     setValues(userDetails);
   }, [userDetails]);
 
@@ -29,12 +33,29 @@ const Form = ({ userDetails }) => {
     }
   };
 
+  const updateUser = async (e) => {
+    e.preventDefault();
+
+    const { data } = await axios.put(
+      `http://localhost:5000/api/users/update/${values._id}`,
+      values
+    );
+
+    setValues({});
+
+    if (data.status) {
+      alert(data.message);
+    } else {
+      alert(data.message);
+    }
+  };
+
   const onInputChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
   };
   return (
     <div className="contact-form shadow p-3">
-      <form onSubmit={addUser}>
+      <form onSubmit={isUpdateUser ? updateUser : addUser}>
         <div class="mb-3">
           <label for="exampleFormControlInput1" class="form-label">
             Name
@@ -77,6 +98,7 @@ const Form = ({ userDetails }) => {
             name="email"
             value={values.email}
             onChange={onInputChange}
+            disabled={isUpdateUser ? true : false}
             required
           />
         </div>
@@ -96,9 +118,15 @@ const Form = ({ userDetails }) => {
           />
         </div>
         <div class="mb-3">
-          <button type="submit" className="btn btn-sm btn-dark">
-            Submit
-          </button>
+          {isUpdateUser ? (
+            <button type="submit" className="btn btn-sm btn-dark">
+              Update
+            </button>
+          ) : (
+            <button type="submit" className="btn btn-sm btn-dark">
+              Submit
+            </button>
+          )}
         </div>
       </form>
     </div>

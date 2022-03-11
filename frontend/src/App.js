@@ -8,6 +8,7 @@ function App() {
   const [userDetails, setUserDetails] = useState({});
 
   const onUpdateUser = (user) => {
+    user.update = true;
     setUserDetails(user);
     setIsForm(!isForm);
   };

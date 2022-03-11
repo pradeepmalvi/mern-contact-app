@@ -30,6 +30,34 @@ const addUser = async (req, res) => {
   }
 };
 
+const updateUser = async (req, res) => {
+  const user = await User.findById(req.params.id);
+
+  if (user) {
+    user.name = req.body.name || user.name;
+    user.email = req.body.email || user.email;
+    user.phone = req.body.phone || user.phone;
+    user.hobbies = req.body.hobbies || user.hobbies;
+
+    const updateUser = await user.save();
+
+    res.json({
+      status: true,
+      message: "User Updated",
+      data: {
+        _id: updateUser.id,
+        name: updateUser.name,
+        email: updateUser.email,
+        phone: updateUser.phone,
+        hobbies: updateUser.hobbies,
+      },
+    });
+  } else {
+    res.status(404);
+    throw new Error("User not found");
+  }
+};
+
 const deleteUser = async (req, res) => {
   const user = await User.findById(req.params.id);
 
@@ -45,5 +73,6 @@ const deleteUser = async (req, res) => {
 module.exports = {
   getUsers,
   addUser,
+  updateUser,
   deleteUser,
 };
